@@ -9,7 +9,7 @@
     <div class="col-span-3">
         {% if filter.qs %}
             <div class="my-4">
-                <h1 class="mt-4 mb-4 prose prose-2x1 text-white">Totals</h1>
+                <h1 class="text-2xl mt-4 mb-4 prose prose-2x1 text-white">Totals</h1>
                 <table class="table">
                     <thead>
                         <tr class="text-xs text-white uppercase">
@@ -22,13 +22,29 @@
                         <tr>
                             <td>${{ total_income|floatformat:2|intcomma }}</td>
                             <td>${{ total_expenses|floatformat:2|intcomma }}</td>
-                            <td>$ {{net_income|floatformat:2|intcomma }}</td>
-                        </tr
+                            <td>${{ net_income|floatformat:2|intcomma }}</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
 
-            <h1 class="mt-8 mb-4 prose prose-2x1 text-white">Transactions</h1>
+            <div class="flex justify-between items-center mt-4 mb-6">
+                <h1 class="mt-8 mb-4 text-2xl prose prose-2x1 text-white">Transactions</h1>
+
+                <a hx-get="{% url 'create-transaction' %}"
+                   hx-push-url="true"
+                   hx-target="#transaction-block"
+                   class="cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         fill="green"
+                         viewBox="0 0 24 24"
+                         stroke-width="1.5"
+                         stroke="currentColor"
+                         class="2-10 h-10">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                </a>
+            </div>
             <table class="table">
                 <thead class="text-xs text-white uppercase">
                     <tr>
@@ -58,7 +74,7 @@
 
     <!-- 1/4 cols for the filter form -->
     <div class="col-span-1">
-        <form hx-get="{% url 'transactions-list' %}"
+        <form hx-get="{% url 'list-transactions' %}"
               hx-target="#transactions-container"
               hx-swap="outerHTML">
 

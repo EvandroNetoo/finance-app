@@ -1,10 +1,17 @@
-from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from tracker.models import Transaction
-from django.http import HttpRequest
-from django.views import View
+from django.urls import reverse
 from django.utils.decorators import method_decorator
+from django.shortcuts import render
+from django.contrib import messages
+from django.http import HttpRequest, HttpResponse
+from django.views import View
+
+
 from tracker.filters import TransactionFilter
+from tracker.forms import TransactionForm
+from tracker.models import Transaction
+from django_htmx.http import HttpResponseClientRedirect, retarget
+
 
 # Create your views here.
 class IndexView(View):
@@ -36,4 +43,25 @@ class ListTransactionsView(View):
                 request, 'partials/transactions-container.html', context
             )
 
-        return render(request, 'transactions-list.html', context)
+        return render(request, 'list-transactions.html', context)
+
+
+@method_decorator([login_required], name='dispatch')
+class CreateTransactionsView(View):
+    def get(self, request: HttpRequest):
+        context = {'form': TransactionForm()}
+        return render(request, 'partials/create-transaction.html', context)
+
+    def post(self, request: HttpRequest):
+        form = TransactionForm(request.POST)
+        if not form.is_valid():
+            response = render(
+                request, 'partials/create-transaction.html', {'form': form}
+            )
+            return retarget(response, '#transaction-block')
+
+        transaction = form.save(commit=False)
+        transaction.user = request.user
+        transaction.save()
+        messages.success(request, 'Transaction was added successfully!')
+        return HttpResponseClientRedirect(reverse('list-transactions'))

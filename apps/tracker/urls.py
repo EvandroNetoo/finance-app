@@ -7,6 +7,11 @@ urlpatterns = [
     path(
         'transactions/',
         views.ListTransactionsView.as_view(),
-        name='transactions-list',
+        name='list-transactions',
+    ),
+    path(
+        'transactions/create/',
+        views.CreateTransactionsView.as_view(),
+        name='create-transaction',
     ),
 ]

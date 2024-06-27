@@ -14,3 +14,19 @@ def transactions() -> List[Transaction]:
 def user_transactions() -> List[Transaction]:
     user = UserFactory()
     return TransactionFactory.create_batch(20, user=user)
+
+
+@pytest.fixture
+def user():
+    return UserFactory()
+
+
+@pytest.fixture
+def transactions_dict_params(user):
+    transactions = TransactionFactory.create(user=user)
+    return {
+        'type': transactions.type,
+        'category': transactions.category_id,
+        'date': transactions.date,
+        'amount': transactions.amount,
+    }
